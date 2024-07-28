@@ -20,6 +20,9 @@ const Navigator = () => {
         <Stack.Screen
           name="MovieDetailsScreen"
           component={MovieDetailsScreen}
+          options={{
+            headerShown: false,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

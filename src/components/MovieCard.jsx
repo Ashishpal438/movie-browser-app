@@ -8,11 +8,16 @@ import {
 } from 'react-native';
 import React from 'react';
 import {image500} from '../api/moviedb';
+import {useNavigation} from '@react-navigation/native';
 
 const MovieCard = ({movie}) => {
   const width = useWindowDimensions().width;
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity key={movie?.id} style={styles.movieCardContainer}>
+    <TouchableOpacity
+      key={movie?.id}
+      style={styles.movieCardContainer}
+      onPress={() => navigation.navigate('MovieDetailsScreen', {movie})}>
       <Image
         source={{uri: image500(movie?.poster_path)}}
         style={{
@@ -33,9 +38,9 @@ const MovieCard = ({movie}) => {
               {movie?.adult ? 'Adult' : 'Kids'}
             </Text>
           </View>
-          <View style={styles.tagWrapper}>
-            <Text style={{color: 'white'}}>
-              {movie?.vote_average?.toFixed(1)}
+          <View style={[styles.tagWrapper, {backgroundColor: 'yellow'}]}>
+            <Text style={{color: 'black'}}>
+              IMDB {movie?.vote_average?.toFixed(1)}
             </Text>
           </View>
         </View>
