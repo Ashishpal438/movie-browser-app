@@ -27,18 +27,18 @@ const apiCall = async (endpoint, params) => {
   }
 };
 
-export const fetchNowPlayingMovies = () => {
-  return apiCall(nowPlayingMoviesEndpoint);
+export const fetchNowPlayingMovies = page => {
+  return apiCall(nowPlayingMoviesEndpoint, {page: page});
 };
 
-export const fetchPopularMovies = () => {
+export const fetchPopularMovies = page => {
   return apiCall(popularMoviesEndpoint);
 };
 
-export const fetchTopRatedMovies = () => {
+export const fetchTopRatedMovies = page => {
   return apiCall(topRatedMoviesEndpoint);
 };
 
-export const fetchUpcomingMovies = () => {
+export const fetchUpcomingMovies = page => {
   return apiCall(upcomingMoviesEndpoint);
 };

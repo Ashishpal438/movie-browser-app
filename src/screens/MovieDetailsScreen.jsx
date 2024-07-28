@@ -8,16 +8,29 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {image500} from '../api/moviedb';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
+import {addFavorite, removeFavorite} from '../store/favoritesSlice';
 
 const MovieDetailsScreen = ({route}) => {
   const navigation = useNavigation();
   const {movie} = route.params;
+  const dispatch = useDispatch();
+  const favorites = useSelector(state => state.favorites.favorites);
+  const isFavorite = favorites.some(fav => fav.id === movie.id);
   const width = useWindowDimensions().width;
-  const isLiked = true;
+
+  const handleFavoriteToggle = () => {
+    if (isFavorite) {
+      dispatch(removeFavorite(movie));
+    } else {
+      dispatch(addFavorite(movie));
+    }
+  };
+
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#1D1C26'}}>
       <View style={{position: 'relative'}}>
@@ -32,15 +45,16 @@ const MovieDetailsScreen = ({route}) => {
             <Icon
               name="arrow-back"
               size={30}
-              color={'yellow'}
+              color={'#FF6F61'}
               style={{position: 'absolute', top: 60, left: 20, zIndex: 1}}
             />
           </TouchableOpacity>
           <MaterialIcon
-            name={isLiked ? 'favorite' : 'favorite-border'}
+            name={isFavorite ? 'favorite' : 'favorite-border'}
             size={30}
-            color={'yellow'}
+            color={'#FF6F61'}
             style={{position: 'absolute', top: 60, right: 20, zIndex: 1}}
+            onPress={handleFavoriteToggle}
           />
         </View>
         <Image
@@ -72,6 +86,11 @@ const MovieDetailsScreen = ({route}) => {
       </View>
       <Text style={styles.title}>{movie?.title}</Text>
       <Text style={styles.overview}>{movie?.overview}</Text>
+      <TouchableOpacity
+        style={styles.favoritesButton}
+        onPress={() => navigation.navigate('FavouritesScreen')}>
+        <Text style={styles.buttonText}>Go to Favorites</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -110,6 +129,20 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     textAlign: 'left',
     marginLeft: 20,
+  },
+  favoritesButton: {
+    backgroundColor: '#FF6F61',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignSelf: 'center',
+    marginTop: 20,
+    marginBottom: 40,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

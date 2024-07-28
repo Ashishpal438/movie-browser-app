@@ -6,6 +6,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import React, {useEffect, useState} from 'react';
 import SegmentedControl from '../components/SegmentedControl';
 import {
@@ -21,25 +22,39 @@ const options = ['Now Playing', 'Popular', 'Top Rated', 'Upcoming'];
 const HomeScreen = () => {
   const [selectedOption, setSelectedOption] = useState('Top Rated');
   const [movies, setMovies] = useState([]);
+  const [nowPlaying, setNowPlaying] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
+  const [popular, setPopular] = useState([]);
+  const [topRated, setTopRated] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const getNowPlayingMovies = async () => {
-    const data = await fetchNowPlayingMovies();
-    setMovies(data.results);
+    setLoading(true);
+    const data = await fetchNowPlayingMovies(page);
+    setNowPlaying(prevMovies => [...prevMovies, ...data.results]);
+    setLoading(false);
   };
 
   const getPopularMovies = async () => {
-    const data = await fetchPopularMovies();
-    setMovies(data.results);
+    setLoading(true);
+    const data = await fetchPopularMovies(page);
+    setPopular(prevMovies => [...prevMovies, ...data.results]);
+    setLoading(false);
   };
 
   const getTopRatedMovies = async () => {
-    const data = await fetchTopRatedMovies();
-    setMovies(data.results);
+    setLoading(true);
+    const data = await fetchTopRatedMovies(page);
+    setTopRated(prevMovies => [...prevMovies, ...data.results]);
+    setLoading(false);
   };
   const getUpcomingMovies = async () => {
-    const data = await fetchUpcomingMovies();
-    setMovies(data.results);
+    setLoading(true);
+    const data = await fetchUpcomingMovies(page);
+    setUpcoming(prevMovies => [...prevMovies, ...data.results]);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -59,11 +74,36 @@ const HomeScreen = () => {
       default:
         console.log('Unknown Filter');
     }
-  }, [selectedOption]);
+  }, [selectedOption, page]);
 
-  const filteredMovies = movies.filter(movie =>
+  const currentMovieType = () => {
+    switch (selectedOption) {
+      case 'Now Playing':
+        return nowPlaying;
+        break;
+      case 'Popular':
+        return popular;
+        break;
+      case 'Top Rated':
+        return topRated;
+        break;
+      case 'Upcoming':
+        return upcoming;
+        break;
+      default:
+        console.log('Unknown Filter');
+    }
+  };
+
+  const filteredMovies = currentMovieType().filter(movie =>
     movie.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const loadMoreMovies = () => {
+    if (!loading) {
+      setPage(prevPage => prevPage + 1);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -72,12 +112,21 @@ const HomeScreen = () => {
         selectedOption={selectedOption}
         onOptionPress={setSelectedOption}
       />
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search movies..."
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
+      <View style={styles.searchContainer}>
+        <Icon
+          name="search-outline"
+          size={20}
+          color="#888"
+          style={styles.searchIcon}
+        />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search movies..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholderTextColor="#888"
+        />
+      </View>
       <View style={{marginBottom: 80}}>
         {filteredMovies.length > 0 ? (
           <FlatList
@@ -85,6 +134,9 @@ const HomeScreen = () => {
             renderItem={({item}) => <MovieCard movie={item} />}
             keyExtractor={item => item.id.toString()}
             ItemSeparatorComponent={() => <View style={{height: 50}} />}
+            onEndReached={loadMoreMovies}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={loading ? <Text>Loading...</Text> : null}
           />
         ) : (
           <Text style={styles.error}>Oops... something went wrong!</Text>
@@ -108,16 +160,28 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: '#FFFFFF',
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2D2C3C',
+    borderRadius: 10,
+    width: '90%',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
   searchInput: {
-    height: 40,
+    color: '#FFF',
+    fontSize: 16,
+    height: 20,
     borderColor: 'gray',
-    borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
     width: '90%',
     color: '#979695',
-    backgroundColor: '#35353D',
   },
 });
 

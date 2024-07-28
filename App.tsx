@@ -15,15 +15,19 @@ import {
 } from 'react-native';
 
 import Navigator from './src/navigation/Index';
+import {Provider} from 'react-redux';
+import store from './src/store/store';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <View style={{flex: 1}}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <Navigator />
-    </View>
+    <Provider store={store}>
+      <View style={{flex: 1}}>
+        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <Navigator />
+      </View>
+    </Provider>
   );
 }
 
