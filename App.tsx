@@ -14,25 +14,16 @@ import {
   View,
 } from 'react-native';
 
-import SegmentedControl from './src/components/SegmentedControl';
-
-const options = ['Now Playing', 'Popular', 'Top Rated', 'Upcoming'];
+import Navigator from './src/navigation/Index';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  const [selectedOption, setSelectedOption] = useState('Top Rated');
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#686D76'}}>
-      <View style={styles.container}>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <SegmentedControl
-          options={options}
-          selectedOption={selectedOption}
-          onOptionPress={setSelectedOption}
-        />
-      </View>
-    </SafeAreaView>
+    <View style={{flex: 1}}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <Navigator />
+    </View>
   );
 }
 

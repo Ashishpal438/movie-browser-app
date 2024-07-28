@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#373A40',
+    backgroundColor: '#35353D',
     borderRadius: 20,
   },
   labelContainer: {
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: 500,
-    color: 'black',
+    color: 'white',
   },
   activeBox: {
     height: '80%',
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     elevation: 5,
-    backgroundColor: '#FFD35A',
+    backgroundColor: '#F17906',
   },
 });
 
