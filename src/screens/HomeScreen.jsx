@@ -22,39 +22,25 @@ const options = ['Now Playing', 'Popular', 'Top Rated', 'Upcoming'];
 const HomeScreen = () => {
   const [selectedOption, setSelectedOption] = useState('Top Rated');
   const [movies, setMovies] = useState([]);
-  const [nowPlaying, setNowPlaying] = useState([]);
-  const [upcoming, setUpcoming] = useState([]);
-  const [popular, setPopular] = useState([]);
-  const [topRated, setTopRated] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
 
   const getNowPlayingMovies = async () => {
-    setLoading(true);
-    const data = await fetchNowPlayingMovies(page);
-    setNowPlaying(prevMovies => [...prevMovies, ...data.results]);
-    setLoading(false);
+    const data = await fetchNowPlayingMovies();
+    setMovies(data.results);
   };
 
   const getPopularMovies = async () => {
-    setLoading(true);
-    const data = await fetchPopularMovies(page);
-    setPopular(prevMovies => [...prevMovies, ...data.results]);
-    setLoading(false);
+    const data = await fetchPopularMovies();
+    setMovies(data.results);
   };
 
   const getTopRatedMovies = async () => {
-    setLoading(true);
-    const data = await fetchTopRatedMovies(page);
-    setTopRated(prevMovies => [...prevMovies, ...data.results]);
-    setLoading(false);
+    const data = await fetchTopRatedMovies();
+    setMovies(data.results);
   };
   const getUpcomingMovies = async () => {
-    setLoading(true);
-    const data = await fetchUpcomingMovies(page);
-    setUpcoming(prevMovies => [...prevMovies, ...data.results]);
-    setLoading(false);
+    const data = await fetchUpcomingMovies();
+    setMovies(data.results);
   };
 
   useEffect(() => {
@@ -74,36 +60,11 @@ const HomeScreen = () => {
       default:
         console.log('Unknown Filter');
     }
-  }, [selectedOption, page]);
+  }, [selectedOption]);
 
-  const currentMovieType = () => {
-    switch (selectedOption) {
-      case 'Now Playing':
-        return nowPlaying;
-        break;
-      case 'Popular':
-        return popular;
-        break;
-      case 'Top Rated':
-        return topRated;
-        break;
-      case 'Upcoming':
-        return upcoming;
-        break;
-      default:
-        console.log('Unknown Filter');
-    }
-  };
-
-  const filteredMovies = currentMovieType().filter(movie =>
+  const filteredMovies = movies.filter(movie =>
     movie.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
-  const loadMoreMovies = () => {
-    if (!loading) {
-      setPage(prevPage => prevPage + 1);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -134,9 +95,6 @@ const HomeScreen = () => {
             renderItem={({item}) => <MovieCard movie={item} />}
             keyExtractor={item => item.id.toString()}
             ItemSeparatorComponent={() => <View style={{height: 50}} />}
-            onEndReached={loadMoreMovies}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={loading ? <Text>Loading...</Text> : null}
           />
         ) : (
           <Text style={styles.error}>Oops... something went wrong!</Text>
